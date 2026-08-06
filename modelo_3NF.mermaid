@@ -1,0 +1,137 @@
+erDiagram
+    clientes {
+        SERIAL id_cliente PK
+        VARCHAR rut UK
+        VARCHAR razon_social
+        VARCHAR nombre_contacto
+        VARCHAR email
+        VARCHAR telefono
+        VARCHAR direccion
+        VARCHAR ciudad
+        VARCHAR region
+    }
+
+    categorias {
+        SERIAL id_categoria PK
+        VARCHAR nombre UK
+        VARCHAR descripcion
+    }
+
+    proveedores {
+        SERIAL id_proveedor PK
+        VARCHAR rut UK
+        VARCHAR razon_social
+        VARCHAR nombre_contacto
+        VARCHAR email
+        VARCHAR telefono
+        VARCHAR direccion
+        VARCHAR ciudad
+        VARCHAR region
+    }
+
+    bodegas {
+        SERIAL id_bodega PK
+        VARCHAR nombre
+        VARCHAR direccion
+        VARCHAR ciudad
+        VARCHAR region
+        DECIMAL capacidad_m2
+    }
+
+    empleados {
+        SERIAL id_empleado PK
+        VARCHAR rut UK
+        VARCHAR nombre
+        VARCHAR apellido
+        VARCHAR cargo
+        VARCHAR email
+        VARCHAR telefono
+        DATE fecha_contratacion
+    }
+
+    transportistas {
+        SERIAL id_transportista PK
+        VARCHAR rut UK
+        VARCHAR razon_social
+        VARCHAR nombre_contacto
+        VARCHAR email
+        VARCHAR telefono
+        VARCHAR tipo_vehiculo
+    }
+
+    productos {
+        SERIAL id_producto PK
+        VARCHAR codigo_sku UK
+        VARCHAR nombre
+        VARCHAR descripcion
+        DECIMAL peso_kg
+        DECIMAL precio_unitario
+        INT id_categoria FK
+    }
+
+    ubicaciones {
+        SERIAL id_ubicacion PK
+        INT id_bodega FK
+        VARCHAR codigo UK
+        VARCHAR pasillo
+        VARCHAR estante
+        VARCHAR nivel
+        INT capacidad_maxima
+    }
+
+    producto_proveedor {
+        INT id_producto FK "PK"
+        INT id_proveedor FK "PK"
+        DECIMAL costo_unitario
+    }
+
+    ordenes {
+        SERIAL id_orden PK
+        INT id_cliente FK
+        DATE fecha_orden
+        VARCHAR estado
+        VARCHAR direccion_destino
+        VARCHAR ciudad_destino
+        VARCHAR region_destino
+    }
+
+    detalle_ordenes {
+        SERIAL id_detalle PK
+        INT id_orden FK
+        INT id_producto FK
+        INT cantidad
+        DECIMAL precio_unitario
+    }
+
+    inventario {
+        SERIAL id_inventario PK
+        INT id_producto FK
+        INT id_ubicacion FK
+        INT cantidad
+        TIMESTAMP fecha_actualizacion
+    }
+
+    envios {
+        SERIAL id_envio PK
+        INT id_orden FK
+        INT id_transportista FK
+        INT id_empleado FK
+        DATE fecha_envio
+        DATE fecha_entrega_estimada
+        DATE fecha_entrega_real
+        VARCHAR estado
+        VARCHAR numero_seguimiento
+    }
+
+    categorias ||--o{ productos : "tiene"
+    bodegas ||--o{ ubicaciones : "contiene"
+    productos ||--o{ producto_proveedor : "suministrado_por"
+    proveedores ||--o{ producto_proveedor : "suministra"
+    clientes ||--o{ ordenes : "genera"
+    ordenes ||--o{ detalle_ordenes : "contiene"
+    productos ||--o{ detalle_ordenes : "incluido_en"
+    productos ||--o{ inventario : "almacenado_en"
+    ubicaciones ||--o{ inventario : "almacena"
+    ordenes ||--o{ envios : "despachado_por"
+    transportistas ||--o{ envios : "transporta"
+    empleados ||--o{ envios : "gestiona"
