@@ -9,7 +9,7 @@
 -- PRODUCTOS (50 registros)
 -- id_categoria referencia categorias (1-50)
 -- ============================================================
-INSERT INTO productos (codigo_sku, nombre, descripcion, peso_kg, precio_unitario, id_categoria) VALUES
+INSERT INTO producto (codigo_sku, nombre, descripcion, peso_kg, precio_unitario, id_categoria) VALUES
 ('ELEC-001', 'Televisor LED 55"', 'Televisor LED 55 pulgadas 4K UHD Smart TV', 12.50, 349990.00, 1),
 ('ALIN-001', 'Arroz grado 1 5kg', 'Arroz grano largo grado 1 bolsa 5 kg', 5.00, 4990.00, 2),
 ('ALIP-001', 'Lechuga hidropónica', 'Lechuga hidropónica unidad fresca', 0.30, 990.00, 3),
