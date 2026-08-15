@@ -1,19 +1,30 @@
 CREATE TABLE clientes (
-    id_cliente    SERIAL       PRIMARY KEY,
-    rut           VARCHAR(12)  UNIQUE NOT NULL,
-    razon_social  VARCHAR(100) NOT NULL,
+    id_cliente      SERIAL       PRIMARY KEY,
+    rut             VARCHAR(12)  UNIQUE NOT NULL,
+    razon_social    VARCHAR(100) NOT NULL,
     nombre_contacto VARCHAR(100),
-    email         VARCHAR(100),
-    telefono      VARCHAR(20),
-    direccion     VARCHAR(200),
-    ciudad        VARCHAR(50),
-    region        VARCHAR(50)
+    email           VARCHAR(100),
+    telefono        VARCHAR(20),
+    direccion       VARCHAR(200),
+    id_ciudad       INT          REFERENCES ciudades(id_ciudad)
 );
 
 CREATE TABLE categorias (
     id_categoria  SERIAL       PRIMARY KEY,
     nombre        VARCHAR(50)  UNIQUE NOT NULL,
     descripcion   VARCHAR(200)
+);
+
+CREATE TABLE regiones (
+    id_region  SERIAL       PRIMARY KEY,
+    nombre     VARCHAR(50)  UNIQUE NOT NULL
+);
+
+CREATE TABLE ciudades (
+    id_ciudad  SERIAL       PRIMARY KEY,
+    nombre     VARCHAR(50)  NOT NULL,
+    id_region  INT          NOT NULL REFERENCES regiones(id_region),
+    UNIQUE (nombre, id_region)
 );
 
 CREATE TABLE proveedores (
@@ -32,8 +43,7 @@ CREATE TABLE bodegas (
     id_bodega     SERIAL        PRIMARY KEY,
     nombre        VARCHAR(50)   NOT NULL,
     direccion     VARCHAR(200),
-    ciudad        VARCHAR(50),
-    region        VARCHAR(50),
+    id_ciudad     INT           REFERENCES ciudades(id_ciudad),
     capacidad_m2  DECIMAL(10,2)
 );
 
@@ -58,4 +68,68 @@ CREATE TABLE transportistas (
     tipo_vehiculo     VARCHAR(50)
 );
 
+CREATE TABLE producto (
+    id_producto     SERIAL        PRIMARY KEY,
+    codigo_sku      VARCHAR(30)   UNIQUE NOT NULL,
+    nombre          VARCHAR(100)  NOT NULL,
+    descripcion     VARCHAR(300),
+    peso_kg         DECIMAL(8,2),
+    precio_unitario DECIMAL(10,2),
+    id_categoria    INT           NOT NULL REFERENCES categorias(id_categoria)
+);
 
+CREATE TABLE ubicaciones (
+    id_ubicacion     SERIAL       PRIMARY KEY,
+    id_bodega        INT          NOT NULL REFERENCES bodegas(id_bodega),
+    codigo           VARCHAR(20)  UNIQUE NOT NULL,
+    pasillo          VARCHAR(10),
+    estante          VARCHAR(10),
+    nivel            VARCHAR(10),
+    capacidad_maxima INT
+);
+
+CREATE TABLE producto_proveedor (
+    id_producto    INT           REFERENCES productos(id_producto),
+    id_proveedor   INT           REFERENCES proveedores(id_proveedor),
+    costo_unitario DECIMAL(10,2),
+    PRIMARY KEY (id_producto, id_proveedor)
+);
+
+CREATE TABLE ordenes (
+    id_orden           SERIAL       PRIMARY KEY,
+    id_cliente         INT          NOT NULL REFERENCES clientes(id_cliente),
+    fecha_orden        DATE         NOT NULL,
+    estado              VARCHAR(20)  NOT NULL,
+    direccion_destino  VARCHAR(200),
+    id_ciudad_destino  INT          REFERENCES ciudades(id_ciudad)
+);
+
+CREATE TABLE inventario (
+    id_inventario        SERIAL    PRIMARY KEY,
+    id_producto          INT       NOT NULL REFERENCES productos(id_producto),
+    id_ubicacion         INT       NOT NULL REFERENCES ubicaciones(id_ubicacion),
+    cantidad             INT       NOT NULL CHECK (cantidad >= 0),
+    fecha_actualizacion  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE detalle_ordenes (
+    id_detalle      SERIAL        PRIMARY KEY,
+    id_orden        INT           NOT NULL REFERENCES ordenes(id_orden),
+    id_producto     INT           NOT NULL REFERENCES productos(id_producto),
+    cantidad        INT           NOT NULL,
+    precio_unitario DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE envios (
+    id_envio              SERIAL       PRIMARY KEY,
+    id_orden              INT          NOT NULL REFERENCES ordenes(id_orden),
+    id_transportista      INT          NOT NULL REFERENCES transportistas(id_transportista),
+    id_empleado           INT          NOT NULL REFERENCES empleados(id_empleado),
+    fecha_envio           DATE,
+    fecha_entrega_estimada DATE,
+    fecha_entrega_real    DATE,
+    estado                VARCHAR(20)  NOT NULL,
+    numero_seguimiento    VARCHAR(50)
+);
+
+ALTER TABLE producto RENAME TO productos;
