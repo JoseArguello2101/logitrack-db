@@ -1,20 +1,3 @@
-CREATE TABLE clientes (
-    id_cliente      SERIAL       PRIMARY KEY,
-    rut             VARCHAR(12)  UNIQUE NOT NULL,
-    razon_social    VARCHAR(100) NOT NULL,
-    nombre_contacto VARCHAR(100),
-    email           VARCHAR(100),
-    telefono        VARCHAR(20),
-    direccion       VARCHAR(200),
-    id_ciudad       INT          REFERENCES ciudades(id_ciudad)
-);
-
-CREATE TABLE categorias (
-    id_categoria  SERIAL       PRIMARY KEY,
-    nombre        VARCHAR(50)  UNIQUE NOT NULL,
-    descripcion   VARCHAR(200)
-);
-
 CREATE TABLE regiones (
     id_region  SERIAL       PRIMARY KEY,
     nombre     VARCHAR(50)  UNIQUE NOT NULL
@@ -25,6 +8,47 @@ CREATE TABLE ciudades (
     nombre     VARCHAR(50)  NOT NULL,
     id_region  INT          NOT NULL REFERENCES regiones(id_region),
     UNIQUE (nombre, id_region)
+);
+
+CREATE TABLE categorias (
+    id_categoria  SERIAL       PRIMARY KEY,
+    nombre        VARCHAR(50)  UNIQUE NOT NULL,
+    descripcion   VARCHAR(200)
+);
+
+CREATE TABLE transportistas (
+    id_transportista  SERIAL       PRIMARY KEY,
+    rut               VARCHAR(12)  UNIQUE NOT NULL,
+    razon_social      VARCHAR(100) NOT NULL,
+    nombre_contacto   VARCHAR(100),
+    email             VARCHAR(100),
+    telefono          VARCHAR(20),
+    tipo_vehiculo     VARCHAR(50)
+);
+
+CREATE TABLE bodegas (
+    id_bodega     SERIAL        PRIMARY KEY,
+    nombre        VARCHAR(50)   NOT NULL,
+    direccion     VARCHAR(200),
+    id_ciudad     INT           REFERENCES ciudades(id_ciudad),
+    capacidad_m2  DECIMAL(10,2)
+);
+
+CREATE TABLE areas (
+    id_area    SERIAL      PRIMARY KEY,
+    id_bodega  INT         NOT NULL REFERENCES bodegas(id_bodega),
+    nombre     VARCHAR(50) NOT NULL  -- ej: 'Despacho', 'Recepción', 'Picking'
+);
+
+CREATE TABLE clientes (
+    id_cliente      SERIAL       PRIMARY KEY,
+    rut             VARCHAR(12)  UNIQUE NOT NULL,
+    razon_social    VARCHAR(100) NOT NULL,
+    nombre_contacto VARCHAR(100),
+    email           VARCHAR(100),
+    telefono        VARCHAR(20),
+    direccion       VARCHAR(200),
+    id_ciudad       INT          REFERENCES ciudades(id_ciudad)
 );
 
 CREATE TABLE proveedores (
@@ -39,14 +63,6 @@ CREATE TABLE proveedores (
     region        VARCHAR(50)
 );
 
-CREATE TABLE bodegas (
-    id_bodega     SERIAL        PRIMARY KEY,
-    nombre        VARCHAR(50)   NOT NULL,
-    direccion     VARCHAR(200),
-    id_ciudad     INT           REFERENCES ciudades(id_ciudad),
-    capacidad_m2  DECIMAL(10,2)
-);
-
 CREATE TABLE empleados (
     id_empleado       SERIAL       PRIMARY KEY,
     rut               VARCHAR(12)  UNIQUE NOT NULL,
@@ -58,16 +74,6 @@ CREATE TABLE empleados (
     fecha_contratacion DATE
 );
 
-CREATE TABLE transportistas (
-    id_transportista  SERIAL       PRIMARY KEY,
-    rut               VARCHAR(12)  UNIQUE NOT NULL,
-    razon_social      VARCHAR(100) NOT NULL,
-    nombre_contacto   VARCHAR(100),
-    email             VARCHAR(100),
-    telefono          VARCHAR(20),
-    tipo_vehiculo     VARCHAR(50)
-);
-
 CREATE TABLE producto (
     id_producto     SERIAL        PRIMARY KEY,
     codigo_sku      VARCHAR(30)   UNIQUE NOT NULL,
@@ -77,6 +83,8 @@ CREATE TABLE producto (
     precio_unitario DECIMAL(10,2),
     id_categoria    INT           NOT NULL REFERENCES categorias(id_categoria)
 );
+
+ALTER TABLE producto RENAME TO productos;
 
 CREATE TABLE ubicaciones (
     id_ubicacion     SERIAL       PRIMARY KEY,
@@ -130,14 +138,6 @@ CREATE TABLE envios (
     fecha_entrega_real    DATE,
     estado                VARCHAR(20)  NOT NULL,
     numero_seguimiento    VARCHAR(50)
-);
-
-ALTER TABLE producto RENAME TO productos;
-
-CREATE TABLE areas (
-    id_area    SERIAL      PRIMARY KEY,
-    id_bodega  INT         NOT NULL REFERENCES bodegas(id_bodega),
-    nombre     VARCHAR(50) NOT NULL  -- ej: 'Despacho', 'Recepción', 'Picking'
 );
 
 ALTER TABLE empleados ADD COLUMN id_area INT REFERENCES areas(id_area);
