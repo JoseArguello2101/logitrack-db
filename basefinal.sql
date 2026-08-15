@@ -133,3 +133,11 @@ CREATE TABLE envios (
 );
 
 ALTER TABLE producto RENAME TO productos;
+
+CREATE TABLE areas (
+    id_area    SERIAL      PRIMARY KEY,
+    id_bodega  INT         NOT NULL REFERENCES bodegas(id_bodega),
+    nombre     VARCHAR(50) NOT NULL  -- ej: 'Despacho', 'Recepción', 'Picking'
+);
+
+ALTER TABLE empleados ADD COLUMN id_area INT REFERENCES areas(id_area);
