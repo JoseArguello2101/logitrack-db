@@ -141,3 +141,27 @@ CREATE TABLE envios (
 );
 
 ALTER TABLE empleados ADD COLUMN id_area INT REFERENCES areas(id_area);
+
+========================
+
+Punto 4 hasta punto 6 
+
+=======================
+
+CREATE TABLE auditoria_inventario (
+    id_auditoria        SERIAL        PRIMARY KEY,
+    id_inventario        INT           NOT NULL REFERENCES inventario(id_inventario),
+    id_empleado          INT           NOT NULL REFERENCES empleados(id_empleado),
+    tipo_movimiento      VARCHAR(20)   NOT NULL,  -- ej: 'entrada', 'salida', 'ajuste', 'traslado'
+    cantidad_anterior    INT           NOT NULL,
+    cantidad_nueva       INT           NOT NULL,
+    fecha_modificacion   TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+);
+
+ALTER TABLE auditoria_inventario ADD COLUMN observacion VARCHAR(200);
+ALTER TABLE auditoria_inventario DROP COLUMN observacion;
+DROP TABLE auditoria_inventario;
+
+
+
+
