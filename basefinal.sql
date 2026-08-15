@@ -162,6 +162,13 @@ ALTER TABLE auditoria_inventario ADD COLUMN observacion VARCHAR(200);
 ALTER TABLE auditoria_inventario DROP COLUMN observacion;
 DROP TABLE auditoria_inventario;
 
+INSERT INTO clientes (rut, razon_social, nombre_contacto, email, telefono, direccion, id_ciudad)
+VALUES ('12345678-9', 'Comercial Andes SpA', 'Juan Pérez', 'jperez@andes.cl', '+56912345678', 'Av. Libertador 450', 1);
+INSERT INTO productos (codigo_sku, nombre, descripcion, peso_kg, precio_unitario, id_categoria)
+VALUES ('SKU-00123', 'Taladro Percutor 750W', 'Taladro percutor eléctrico, mandril de 13mm', 2.30, 45990, 1);
+
+
+
 
 
 
