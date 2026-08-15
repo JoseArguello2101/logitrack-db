@@ -59,8 +59,7 @@ CREATE TABLE proveedores (
     email         VARCHAR(100),
     telefono      VARCHAR(20),
     direccion     VARCHAR(200),
-    ciudad        VARCHAR(50),
-    region        VARCHAR(50)
+    id_ciudad       INT          REFERENCES ciudades(id_ciudad)
 );
 
 CREATE TABLE empleados (
@@ -167,7 +166,16 @@ VALUES ('12345678-9', 'Comercial Andes SpA', 'Juan Pérez', 'jperez@andes.cl', '
 INSERT INTO productos (codigo_sku, nombre, descripcion, peso_kg, precio_unitario, id_categoria)
 VALUES ('SKU-00123', 'Taladro Percutor 750W', 'Taladro percutor eléctrico, mandril de 13mm', 2.30, 45990, 1);
 
+UPDATE inventario
+SET cantidad = 100
+    fecha_actualizacion = CURRENT_TIMESTAMP
+    WHERE id_producto = 1 AND id_ubicacion = 1;
 
+
+UPDATE proveedores
+SET email    = 'contacto@nuevoproveedor.cl',
+    telefono = '+56987654321'
+WHERE id_proveedor = 1;
 
 
 
