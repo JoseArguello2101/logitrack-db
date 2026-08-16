@@ -2,10 +2,10 @@
 -- Archivo: 02_tablas_pablo.sql
 -- Autor: Pablo
 -- Capa: 1 (tablas con FK a Capa 0)
--- Tablas: producto, ubicaciones, producto_proveedor
+-- Tablas: productos, ubicaciones, producto_proveedor
 -- ============================================================
 
-CREATE TABLE producto (
+CREATE TABLE productos (
     id_producto     SERIAL        PRIMARY KEY,
     codigo_sku      VARCHAR(30)   UNIQUE NOT NULL,
     nombre          VARCHAR(100)  NOT NULL,
