@@ -1,4 +1,4 @@
-CREATE TABLE regiones (
+	CREATE TABLE regiones (
     id_region  SERIAL       PRIMARY KEY,
     nombre     VARCHAR(50)  UNIQUE NOT NULL
 );
@@ -154,7 +154,7 @@ CREATE TABLE auditoria_inventario (
     tipo_movimiento      VARCHAR(20)   NOT NULL,  -- ej: 'entrada', 'salida', 'ajuste', 'traslado'
     cantidad_anterior    INT           NOT NULL,
     cantidad_nueva       INT           NOT NULL,
-    fecha_modificacion   TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    fecha_modificacion   TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
 );
 
 ALTER TABLE auditoria_inventario ADD COLUMN observacion VARCHAR(200);
@@ -167,7 +167,7 @@ INSERT INTO productos (codigo_sku, nombre, descripcion, peso_kg, precio_unitario
 VALUES ('SKU-00123', 'Taladro Percutor 750W', 'Taladro percutor eléctrico, mandril de 13mm', 2.30, 45990, 1);
 
 UPDATE inventario
-SET cantidad = 100
+SET cantidad = 100,
     fecha_actualizacion = CURRENT_TIMESTAMP
     WHERE id_producto = 1 AND id_ubicacion = 1;
 
@@ -177,6 +177,59 @@ SET email    = 'contacto@nuevoproveedor.cl',
     telefono = '+56987654321'
 WHERE id_proveedor = 1;
 
+SELECT * FROM ordenes WHERE id_cliente = 5;
 
+-- 1. Borrar detalle_ordenes de las órdenes de ese cliente
+DELETE FROM detalle_ordenes
+WHERE id_orden IN (SELECT id_orden FROM ordenes WHERE id_cliente = 5);
+-- 2. Borrar envios de esas órdenes
+DELETE FROM envios
+WHERE id_orden IN (SELECT id_orden FROM ordenes WHERE id_cliente = 5);
+-- 3. Borrar las órdenes del cliente
+DELETE FROM ordenes
+WHERE id_cliente = 5;
+-- 4. Ahora sí, borrar el cliente
+DELETE FROM clientes
+WHERE id_cliente = 5;
 
+SELECT * FROM clientes ORDER BY id_cliente DESC LIMIT 5;
 
+SELECT * FROM productos ORDER BY id_producto DESC LIMIT 5;
+
+SELECT * FROM inventario ORDER BY id_inventario DESC LIMIT 5;
+
+SELECT columnas
+FROM tabla_A
+JOIN tabla_B ON tabla_A.columna_fk = tabla_B.columna_pk;
+
+SELECT o.id_orden , c.razon_social 
+FROM ordenes o 
+JOIN clientes  c ON  o.id_cliente = c.id_cliente;
+
+SELECT o.id_orden , c.razon_social 
+FROM ordenes o 
+JOIN clientes  c ON  o.id_cliente = c.id_cliente;
+
+SELECT d.id_orden,
+       p.nombre AS producto,
+       cat.nombre AS categoria,
+       d.cantidad,
+       d.precio_unitario
+FROM detalle_ordenes d
+JOIN productos p ON d.id_producto = p.id_producto
+JOIN categorias cat ON p.id_categoria = cat.id_categoria
+ORDER BY d.id_orden;
+
+SELECT e.id_envio,
+       o.id_orden,
+       cli.razon_social AS cliente,
+       t.razon_social AS transportista,
+	   emp.nombre || ' ' || emp.apellido AS empleado_responsable,
+       e.estado,
+       e.fecha_envio
+FROM envios e
+JOIN ordenes o ON e.id_orden = o.id_orden
+JOIN clientes cli ON o.id_cliente = cli.id_cliente
+JOIN transportistas t ON e.id_transportista = t.id_transportista
+JOIN empleados emp ON e.id_empleado = emp.id_empleado
+==================================================================
