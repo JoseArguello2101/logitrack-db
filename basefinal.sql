@@ -236,7 +236,7 @@ JOIN empleados emp ON e.id_empleado = emp.id_empleado
 
 ========================
 
-Punto 7 hasta punto 8 
+Punto 7 hasta punto 9 
 
 =======================
 
