@@ -233,3 +233,37 @@ JOIN clientes cli ON o.id_cliente = cli.id_cliente
 JOIN transportistas t ON e.id_transportista = t.id_transportista
 JOIN empleados emp ON e.id_empleado = emp.id_empleado
 ==================================================================
+
+========================
+
+Punto 7 hasta punto 8 
+
+=======================
+
+SELECT 
+    p.id_producto,
+    p.nombre,
+    SUM(i.cantidad) AS stock_total
+FROM productos p
+INNER JOIN inventario i ON p.id_producto = i.id_producto
+GROUP BY p.id_producto, p.nombre
+HAVING SUM(i.cantidad) <= 10;
+
+SELECT 
+    b.id_bodega,
+    b.nombre AS bodega,
+    SUM(i.cantidad) AS total_productos
+FROM bodegas b
+INNER JOIN ubicaciones u ON b.id_bodega = u.id_bodega
+INNER JOIN inventario i ON u.id_ubicacion = i.id_ubicacion
+GROUP BY b.id_bodega, b.nombre;
+
+SELECT 
+    pr.id_proveedor,
+    pr.razon_social AS proveedor,
+    p.nombre AS producto,
+    pp.costo_unitario
+FROM productos p
+INNER JOIN producto_proveedor pp ON p.id_producto = pp.id_producto
+INNER JOIN proveedores pr       ON pp.id_proveedor = pr.id_proveedor;
+=========================================================================
